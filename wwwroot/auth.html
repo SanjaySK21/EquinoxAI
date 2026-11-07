@@ -1,0 +1,1374 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#080d19">
+
+    <title>EquinoxAI | Market Intelligence</title>
+
+    <link rel="icon" href="/equinox-ai-icon.svg">
+
+    <style>
+        :root {
+            --background: #080d19;
+            --surface: #101a2c;
+            --surface-light: #142139;
+            --surface-input: #0a1323;
+            --border: #243550;
+            --border-light: #304361;
+            --blue: #4777fa;
+            --blue-light: #76a1ff;
+            --cyan: #43c9ee;
+            --text: #f1f5fb;
+            --muted: #8fa2bf;
+            --green: #35d39a;
+            --red: #ff777f;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            min-height: 100%;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background:
+                radial-gradient(
+                    circle at 12% 15%,
+                    rgba(52, 103, 220, 0.13),
+                    transparent 32%
+                ),
+                radial-gradient(
+                    circle at 88% 85%,
+                    rgba(47, 193, 221, 0.08),
+                    transparent 30%
+                ),
+                var(--background);
+
+            color: var(--text);
+            font-family: "Segoe UI", Inter, Arial, sans-serif;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            padding: 35px 24px;
+        }
+
+        button,
+        input {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        /* =========================================
+           MAIN LAYOUT
+        ========================================= */
+
+        .auth-layout {
+            width: 100%;
+            max-width: 1190px;
+            min-height: 660px;
+
+            display: grid;
+            grid-template-columns: 1.12fr 0.88fr;
+
+            border: 1px solid rgba(109, 144, 204, 0.17);
+            border-radius: 24px;
+            overflow: hidden;
+
+            background: rgba(12, 20, 36, 0.78);
+
+            box-shadow:
+                0 35px 100px rgba(0, 0, 0, 0.42),
+                0 0 65px rgba(54, 105, 219, 0.07);
+        }
+
+        /* =========================================
+           LEFT BRAND / MARKET PANEL
+        ========================================= */
+
+        .brand-panel {
+            position: relative;
+            min-height: 660px;
+            overflow: hidden;
+
+            padding: 48px 48px 35px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #111f39 0%,
+                    #0c172a 53%,
+                    #0a1424 100%
+                );
+
+            border-right: 1px solid rgba(111, 146, 204, 0.13);
+
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .brand-panel::before {
+            content: "";
+            position: absolute;
+
+            width: 450px;
+            height: 450px;
+
+            right: -200px;
+            top: 80px;
+
+            border-radius: 50%;
+
+            background: rgba(57, 111, 238, 0.11);
+            filter: blur(85px);
+            pointer-events: none;
+        }
+
+        .brand-panel::after {
+            content: "";
+            position: absolute;
+
+            width: 300px;
+            height: 300px;
+
+            left: -150px;
+            bottom: -130px;
+
+            border-radius: 50%;
+
+            background: rgba(42, 199, 221, 0.08);
+            filter: blur(75px);
+            pointer-events: none;
+        }
+
+        .brand-top,
+        .brand-content,
+        .brand-bottom {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Brand */
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+        }
+
+        .brand-icon {
+            width: 47px;
+            height: 47px;
+
+            display: grid;
+            place-items: center;
+
+            border-radius: 14px;
+
+            background: linear-gradient(
+                145deg,
+                #5188ff,
+                #315ddd
+            );
+
+            box-shadow: 0 9px 27px rgba(55, 105, 239, 0.28);
+        }
+
+        .brand-icon svg {
+            width: 26px;
+            height: 26px;
+        }
+
+        .brand-name {
+            font-size: 23px;
+            font-weight: 800;
+            letter-spacing: -0.8px;
+        }
+
+        .brand-name span {
+            color: var(--blue-light);
+        }
+
+        .brand-description {
+            margin-top: 4px;
+            font-size: 9px;
+            color: #869bbd;
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+
+        /* Main message */
+
+        .brand-content {
+            margin-top: 65px;
+            margin-bottom: 35px;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+
+            padding: 8px 12px;
+
+            border: 1px solid rgba(102, 150, 255, 0.23);
+            border-radius: 30px;
+
+            background: rgba(63, 112, 220, 0.09);
+
+            color: #a5c1ff;
+
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+        }
+
+        .eyebrow-dot {
+            width: 7px;
+            height: 7px;
+
+            border-radius: 50%;
+
+            background: var(--green);
+            box-shadow: 0 0 12px rgba(53, 211, 154, 0.75);
+        }
+
+        .brand-content h1 {
+            margin: 25px 0 15px;
+
+            max-width: 520px;
+
+            font-size: clamp(33px, 4vw, 49px);
+            line-height: 1.13;
+            letter-spacing: -1.8px;
+            font-weight: 800;
+        }
+
+        .brand-content h1 span {
+            background: linear-gradient(
+                90deg,
+                #75a1ff,
+                #55d4ed
+            );
+
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .brand-content > p {
+            max-width: 455px;
+
+            margin: 0;
+
+            font-size: 14px;
+            line-height: 1.8;
+            color: #9aacc7;
+        }
+
+        /* =========================================
+           DECORATIVE MARKET CHART
+        ========================================= */
+
+        .market-visual {
+            margin-top: 38px;
+
+            padding: 20px;
+
+            border: 1px solid rgba(120, 154, 212, 0.17);
+            border-radius: 16px;
+
+            background: rgba(8, 16, 31, 0.65);
+
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .chart-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .chart-heading strong {
+            display: block;
+            font-size: 12px;
+            color: #e5edfa;
+        }
+
+        .chart-heading small {
+            display: block;
+            margin-top: 4px;
+            font-size: 10px;
+            color: #7e93b3;
+        }
+
+        .chart-label {
+            padding: 6px 9px;
+
+            border-radius: 6px;
+
+            color: #79b5ff;
+            background: rgba(68, 125, 249, 0.12);
+
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .market-chart {
+            width: 100%;
+            height: 115px;
+            display: block;
+        }
+
+        .chart-caption {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+
+            margin-top: 8px;
+
+            color: #7489a9;
+            font-size: 9px;
+        }
+
+        .chart-caption span:first-child {
+            color: #8aa5ce;
+        }
+
+        /* =========================================
+           FEATURE CARDS
+        ========================================= */
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 11px;
+
+            margin-top: 15px;
+        }
+
+        .feature-card {
+            padding: 13px 11px;
+
+            border: 1px solid rgba(119, 151, 205, 0.14);
+            border-radius: 11px;
+
+            background: rgba(17, 31, 54, 0.65);
+        }
+
+        .feature-icon {
+            width: 28px;
+            height: 28px;
+
+            display: grid;
+            place-items: center;
+
+            margin-bottom: 9px;
+
+            border-radius: 8px;
+
+            color: #85acff;
+            background: rgba(78, 125, 240, 0.13);
+        }
+
+        .feature-icon svg {
+            width: 15px;
+            height: 15px;
+        }
+
+        .feature-card strong {
+            display: block;
+            font-size: 10px;
+            color: #e2ebfa;
+        }
+
+        .feature-card small {
+            display: block;
+            margin-top: 5px;
+
+            color: #8094b3;
+            font-size: 9px;
+            line-height: 1.5;
+        }
+
+        /* =========================================
+           BOTTOM BRAND
+        ========================================= */
+
+        .brand-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+
+            padding-top: 22px;
+
+            border-top: 1px solid rgba(123, 153, 205, 0.14);
+        }
+
+        .brand-bottom p {
+            margin: 0;
+            font-size: 9px;
+            color: #7186a6;
+            letter-spacing: 0.8px;
+        }
+
+        .security-note {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+
+            font-size: 9px;
+            color: #91b9b1;
+        }
+
+        .security-note svg {
+            width: 13px;
+            height: 13px;
+        }
+
+        /* =========================================
+           RIGHT AUTH PANEL
+        ========================================= */
+
+        .auth-panel {
+            min-width: 0;
+
+            padding: 42px 43px;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+
+            background:
+                radial-gradient(
+                    circle at 100% 0%,
+                    rgba(67, 112, 216, 0.10),
+                    transparent 37%
+                ),
+                #0c1526;
+        }
+
+        .auth-panel-content {
+            width: 100%;
+            max-width: 390px;
+            margin: auto;
+        }
+
+        .mobile-brand {
+            display: none;
+        }
+
+        .auth-heading {
+            margin-bottom: 28px;
+        }
+
+        .auth-kicker {
+            margin-bottom: 12px;
+
+            color: #86aaff;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1.7px;
+        }
+
+        .auth-heading h2 {
+            margin: 0;
+
+            font-size: 28px;
+            line-height: 1.25;
+            letter-spacing: -0.8px;
+
+            color: #f4f7ff;
+        }
+
+        .auth-heading p {
+            margin: 9px 0 0;
+
+            font-size: 12px;
+            line-height: 1.7;
+            color: #91a4c0;
+        }
+
+        /* =========================================
+           SUCCESS / ERROR MESSAGE
+        ========================================= */
+
+        .message {
+            display: none;
+
+            margin-bottom: 21px;
+            padding: 13px 15px;
+
+            border-radius: 9px;
+
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .message.success {
+            display: block;
+
+            color: #aaf4d4;
+            background: rgba(20, 83, 59, 0.45);
+            border: 1px solid rgba(52, 211, 153, 0.32);
+        }
+
+        .message.error {
+            display: block;
+
+            color: #ffc4c8;
+            background: rgba(112, 35, 43, 0.30);
+            border: 1px solid rgba(255, 119, 127, 0.28);
+        }
+
+        /* =========================================
+           AUTH FORM
+        ========================================= */
+
+        .auth-form {
+            width: 100%;
+        }
+
+        .auth-form h3 {
+            margin: 0 0 22px;
+
+            font-size: 17px;
+            font-weight: 700;
+            color: #edf3ff;
+        }
+
+        .form-group {
+            margin-bottom: 19px;
+        }
+
+        .form-group label {
+            display: block;
+
+            margin-bottom: 8px;
+
+            font-size: 11px;
+            font-weight: 600;
+            color: #c4d1e7;
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        .input-wrap input {
+            width: 100%;
+            height: 47px;
+
+            padding: 0 14px;
+
+            border: 1px solid #30415e;
+            border-radius: 9px;
+
+            background: var(--surface-input);
+            color: #f3f6ff;
+
+            font-size: 13px;
+
+            outline: none;
+
+            transition:
+                border-color 0.2s,
+                box-shadow 0.2s,
+                background 0.2s;
+        }
+
+        .input-wrap input::placeholder {
+            color: #61738f;
+        }
+
+        .input-wrap input:focus {
+            border-color: var(--blue);
+            background: #0d192c;
+
+            box-shadow:
+                0 0 0 3px rgba(71, 119, 250, 0.13);
+        }
+
+        .password-help {
+            margin-top: 8px;
+
+            color: #8195b5;
+            font-size: 10px;
+            line-height: 1.6;
+        }
+
+        .required-mark {
+            color: #ff9299;
+        }
+
+        /* =========================================
+           BUTTON
+        ========================================= */
+
+        .auth-submit {
+            width: 100%;
+            height: 48px;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+
+            margin-top: 7px;
+
+            border: 1px solid rgba(137, 171, 255, 0.24);
+            border-radius: 9px;
+
+            background: linear-gradient(
+                105deg,
+                #3869ed,
+                #5687ff
+            );
+
+            color: #fff;
+
+            font-size: 13px;
+            font-weight: 750;
+
+            box-shadow: 0 8px 22px rgba(51, 102, 232, 0.20);
+
+            transition:
+                transform 0.2s,
+                box-shadow 0.2s,
+                filter 0.2s;
+        }
+
+        .auth-submit:hover {
+            transform: translateY(-2px);
+
+            filter: brightness(1.09);
+
+            box-shadow: 0 12px 27px rgba(51, 102, 232, 0.29);
+        }
+
+        .auth-submit:active {
+            transform: translateY(0);
+        }
+
+        .auth-submit:disabled {
+            opacity: 0.65;
+            cursor: wait;
+            transform: none;
+        }
+
+        .submit-arrow {
+            font-size: 16px;
+            line-height: 1;
+        }
+
+        /* =========================================
+           FORM FOOTER
+        ========================================= */
+
+        .auth-switch {
+            margin-top: 24px;
+
+            text-align: center;
+
+            color: #91a3bd;
+            font-size: 11px;
+        }
+
+        .auth-switch a {
+            margin-left: 4px;
+
+            color: #84aaff;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .auth-switch a:hover {
+            color: #b4ccff;
+            text-decoration: underline;
+        }
+
+        .auth-divider {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+
+            margin: 29px 0 19px;
+
+            color: #6f84a3;
+            font-size: 9px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .auth-divider::before,
+        .auth-divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: rgba(119, 148, 194, 0.18);
+        }
+
+        .auth-disclaimer {
+            text-align: center;
+
+            color: #7084a2;
+            font-size: 9px;
+            line-height: 1.7;
+        }
+
+        .auth-disclaimer strong {
+            color: #92a7c7;
+            font-weight: 600;
+        }
+
+        /* =========================================
+           UTILITY
+        ========================================= */
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* =========================================
+           RESPONSIVE DESIGN
+        ========================================= */
+
+        @media (max-width: 1000px) {
+            .brand-panel {
+                padding: 38px 32px 28px;
+            }
+
+            .auth-panel {
+                padding: 35px 30px;
+            }
+
+            .brand-content h1 {
+                font-size: 38px;
+            }
+        }
+
+        @media (max-width: 800px) {
+            body {
+                padding: 18px;
+                align-items: flex-start;
+            }
+
+            .auth-layout {
+                max-width: 520px;
+                min-height: auto;
+
+                grid-template-columns: 1fr;
+            }
+
+            .brand-panel {
+                display: none;
+            }
+
+            .auth-panel {
+                padding: 35px 27px;
+                min-height: 650px;
+            }
+
+            .mobile-brand {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 11px;
+
+                margin-bottom: 33px;
+            }
+
+            .mobile-brand .brand-icon {
+                width: 41px;
+                height: 41px;
+            }
+
+            .mobile-brand .brand-name {
+                font-size: 21px;
+            }
+
+            .auth-panel-content {
+                max-width: 390px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 0;
+            }
+
+            .auth-layout {
+                min-height: 100vh;
+                border: none;
+                border-radius: 0;
+            }
+
+            .auth-panel {
+                padding: 30px 23px;
+                min-height: 100vh;
+            }
+
+            .auth-heading h2 {
+                font-size: 25px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="auth-layout">
+
+        <!-- =====================================
+             LEFT: EQUINOXAI BRANDING
+        ====================================== -->
+
+        <section class="brand-panel">
+
+            <div class="brand-top">
+
+                <div class="brand-logo">
+
+                    <div class="brand-icon">
+                        <svg viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="white"
+                             stroke-width="2"
+                             stroke-linecap="round"
+                             stroke-linejoin="round"
+                             aria-hidden="true">
+                            <path d="M3 17l6-6 4 4 8-9"/>
+                            <path d="M15 6h6v6"/>
+                            <path d="M3 21h18"/>
+                        </svg>
+                    </div>
+
+                    <div>
+                        <div class="brand-name">
+                            equinox<span>AI</span>
+                        </div>
+
+                        <div class="brand-description">
+                            INTELLIGENCE TERMINAL
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="brand-content">
+
+                <div class="eyebrow">
+                    <span class="eyebrow-dot"></span>
+                    EQUITY INTELLIGENCE WORKSPACE
+                </div>
+
+                <h1>
+                    See the market.
+                    <br>
+                    <span>Understand the signal.</span>
+                </h1>
+
+                <p>
+                    Bring price trends, technical indicators, risk context
+                    and AI-assisted research together in one intelligent
+                    equity research workspace.
+                </p>
+
+                <!-- Decorative stock chart -->
+
+                <div class="market-visual">
+
+                    <div class="chart-heading">
+
+                        <div>
+                            <strong>Market intelligence</strong>
+                            <small>Illustrative research workspace preview</small>
+                        </div>
+
+                        <span class="chart-label">
+                            EQUITY RESEARCH
+                        </span>
+
+                    </div>
+
+                    <svg class="market-chart"
+                         viewBox="0 0 500 115"
+                         preserveAspectRatio="none"
+                         role="img"
+                         aria-label="Decorative stock price trend illustration">
+
+                        <defs>
+                            <linearGradient id="chartFill"
+                                            x1="0"
+                                            y1="0"
+                                            x2="0"
+                                            y2="1">
+
+                                <stop offset="0%"
+                                      stop-color="#5688ff"
+                                      stop-opacity="0.28"/>
+
+                                <stop offset="100%"
+                                      stop-color="#5688ff"
+                                      stop-opacity="0"/>
+                            </linearGradient>
+                        </defs>
+
+                        <g stroke="#2a3a56"
+                           stroke-width="1"
+                           stroke-dasharray="4 6">
+
+                            <line x1="0" y1="22" x2="500" y2="22"/>
+                            <line x1="0" y1="52" x2="500" y2="52"/>
+                            <line x1="0" y1="82" x2="500" y2="82"/>
+                            <line x1="0" y1="108" x2="500" y2="108"/>
+
+                        </g>
+
+                        <path
+                            d="M0 91
+                               C25 83 35 90 55 76
+                               S88 69 105 76
+                               S138 48 158 58
+                               S188 69 209 51
+                               S242 61 260 39
+                               S290 42 310 32
+                               S346 51 363 30
+                               S394 42 413 20
+                               S453 29 473 13
+                               L500 7
+                               L500 115
+                               L0 115 Z"
+                            fill="url(#chartFill)"/>
+
+                        <path
+                            d="M0 91
+                               C25 83 35 90 55 76
+                               S88 69 105 76
+                               S138 48 158 58
+                               S188 69 209 51
+                               S242 61 260 39
+                               S290 42 310 32
+                               S346 51 363 30
+                               S394 42 413 20
+                               S453 29 473 13
+                               L500 7"
+                            fill="none"
+                            stroke="#73a0ff"
+                            stroke-width="2.6"
+                            stroke-linecap="round"
+                            vector-effect="non-scaling-stroke"/>
+
+                        <circle cx="500"
+                                cy="7"
+                                r="4"
+                                fill="#55d7e9"/>
+
+                    </svg>
+
+                    <div class="chart-caption">
+                        <span>Trend analysis</span>
+                        <span>Technical signals</span>
+                        <span>Risk context</span>
+                    </div>
+
+                </div>
+
+                <!-- Research feature cards -->
+
+                <div class="feature-grid">
+
+                    <div class="feature-card">
+
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="2"
+                                 stroke-linecap="round"
+                                 stroke-linejoin="round">
+                                <path d="M3 3v18h18"/>
+                                <path d="M7 14l4-4 4 3 6-7"/>
+                            </svg>
+                        </div>
+
+                        <strong>Market trends</strong>
+                        <small>Provider-backed price history</small>
+
+                    </div>
+
+                    <div class="feature-card">
+
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="2"
+                                 stroke-linecap="round"
+                                 stroke-linejoin="round">
+                                <path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11z"/>
+                                <path d="M9 12l2 2 4-4"/>
+                            </svg>
+                        </div>
+
+                        <strong>Risk analysis</strong>
+                        <small>Volatility-aware context</small>
+
+                    </div>
+
+                    <div class="feature-card">
+
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="2"
+                                 stroke-linecap="round"
+                                 stroke-linejoin="round">
+                                <path d="M12 3l1.9 5.8L20 11l-6.1 2.2L12 19l-1.9-5.8L4 11l6.1-2.2L12 3z"/>
+                                <path d="M19 14l1.1 2.9L23 18l-2.9 1.1L19 22l-1.1-2.9L15 18l2.9-1.1L19 14z"/>
+                            </svg>
+                        </div>
+
+                        <strong>AI research</strong>
+                        <small>Explanations with context</small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="brand-bottom">
+
+                <p>
+                    © 2026 EQUINOX INTELLIGENCE
+                </p>
+
+                <div class="security-note">
+
+                    <svg viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="2"
+                         stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11z"/>
+                        <path d="M9 12l2 2 4-4"/>
+                    </svg>
+
+                    Secure research workspace
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- =====================================
+             RIGHT: AUTHENTICATION
+        ====================================== -->
+
+        <section class="auth-panel">
+
+            <div class="auth-panel-content">
+
+                <!-- Mobile-only brand -->
+
+                <div class="mobile-brand">
+
+                    <div class="brand-icon">
+
+                        <svg viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="white"
+                             stroke-width="2"
+                             stroke-linecap="round"
+                             stroke-linejoin="round">
+                            <path d="M3 17l6-6 4 4 8-9"/>
+                            <path d="M15 6h6v6"/>
+                        </svg>
+
+                    </div>
+
+                    <div class="brand-name">
+                        equinox<span>AI</span>
+                    </div>
+
+                </div>
+
+                <div class="auth-heading">
+
+                    <div class="auth-kicker">
+                        WELCOME TO EQUINOXAI
+                    </div>
+
+                    <h2>
+                        Your research.
+                        <br>
+                        Your perspective.
+                    </h2>
+
+                    <p>
+                        Sign in to access your market intelligence
+                        and equity research workspace.
+                    </p>
+
+                </div>
+
+                <!-- Existing JavaScript message container -->
+
+                <div id="message"
+                     class="message"
+                     role="alert"
+                     aria-live="polite">
+                </div>
+
+                <!-- =================================
+                     LOGIN FORM
+                ================================== -->
+
+                <form id="loginForm"
+                      class="auth-form"
+                      autocomplete="on">
+
+                    <h3>Welcome back</h3>
+
+                    <div class="form-group">
+
+                        <label for="loginEmail">
+                            EMAIL ADDRESS
+                        </label>
+
+                        <div class="input-wrap">
+
+                            <input
+                                id="loginEmail"
+                                name="email"
+                                type="email"
+                                placeholder="you@example.com"
+                                autocomplete="username"
+                                required>
+
+                        </div>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="loginPassword">
+                            PASSWORD
+                        </label>
+
+                        <div class="input-wrap">
+
+                            <input
+                                id="loginPassword"
+                                name="password"
+                                type="password"
+                                placeholder="Enter your password"
+                                autocomplete="current-password"
+                                required>
+
+                        </div>
+
+                    </div>
+
+                    <button id="loginButton"
+                            class="auth-submit"
+                            type="submit">
+
+                        <span>Sign in to EquinoxAI</span>
+
+                        <span class="submit-arrow">→</span>
+
+                    </button>
+
+                    <div class="auth-switch">
+
+                        Don't have an account?
+
+                        <a href="#register"
+                           id="showRegister">
+                            Create account
+                        </a>
+
+                    </div>
+
+                </form>
+
+                <!-- =================================
+                     REGISTRATION FORM
+                ================================== -->
+
+                <form id="registerForm"
+                      class="auth-form hidden"
+                      autocomplete="on">
+
+                    <h3>Create your account</h3>
+
+                    <div class="form-group">
+
+                        <label for="registerFullName">
+                            FULL NAME
+                        </label>
+
+                        <div class="input-wrap">
+
+                            <input
+                                id="registerFullName"
+                                name="fullName"
+                                type="text"
+                                minlength="2"
+                                maxlength="150"
+                                placeholder="Enter your full name"
+                                autocomplete="name"
+                                required>
+
+                        </div>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="registerEmail">
+                            EMAIL ADDRESS
+                        </label>
+
+                        <div class="input-wrap">
+
+                            <input
+                                id="registerEmail"
+                                name="email"
+                                type="email"
+                                placeholder="you@example.com"
+                                autocomplete="email"
+                                required>
+
+                        </div>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="registerPassword">
+                            CREATE PASSWORD
+                            <span class="required-mark">*</span>
+                        </label>
+
+                        <div class="input-wrap">
+
+                            <input
+                                id="registerPassword"
+                                name="password"
+                                type="password"
+                                minlength="8"
+                                placeholder="Create a strong password"
+                                autocomplete="new-password"
+                                required>
+
+                        </div>
+
+                        <div class="password-help">
+                            Minimum 8 characters, including uppercase,
+                            lowercase, number, and special character.
+                        </div>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="confirmPassword">
+                            CONFIRM PASSWORD
+                        </label>
+
+                        <div class="input-wrap">
+
+                            <input
+                                id="confirmPassword"
+                                name="confirmPassword"
+                                type="password"
+                                minlength="8"
+                                placeholder="Re-enter your password"
+                                autocomplete="new-password"
+                                required>
+
+                        </div>
+
+                    </div>
+
+                    <button id="registerButton"
+                            class="auth-submit"
+                            type="submit">
+
+                        <span>Create my account</span>
+
+                        <span class="submit-arrow">→</span>
+
+                    </button>
+
+                    <div class="auth-switch">
+
+                        Already have an account?
+
+                        <a href="#login"
+                           id="showLogin">
+                            Sign in
+                        </a>
+
+                    </div>
+
+                </form>
+
+                <div class="auth-divider">
+                    EQUINOX INTELLIGENCE
+                </div>
+
+                <div class="auth-disclaimer">
+                    <strong>Decision support, not financial advice.</strong>
+                    <br>
+                    Market data and AI-generated research should be
+                    independently verified before making investment decisions.
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Preserve the existing authentication JavaScript -->
+
+    <script src="/js/auth.js"></script>
+
+</body>
+</html>

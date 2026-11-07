@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Equinox AI icon">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#101a35"/>
+      <stop offset="1" stop-color="#17112f"/>
+    </linearGradient>
+    <linearGradient id="line" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#4f8cff"/>
+      <stop offset="1" stop-color="#b18aff"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="1.6" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect x="2" y="2" width="60" height="60" rx="17" fill="url(#bg)" stroke="#34456f" stroke-width="1.2"/>
+  <path d="M12 47H52" stroke="#354466" stroke-width="1.4" stroke-linecap="round"/>
+  <path d="M12 38L22 29L30 34L43 18L52 23" fill="none" stroke="url(#line)" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
+  <circle cx="22" cy="29" r="2.7" fill="#7ab2ff"/>
+  <circle cx="30" cy="34" r="2.7" fill="#8e9cff"/>
+  <circle cx="43" cy="18" r="3" fill="#c2a0ff"/>
+  <path d="M49 10L50.5 14.5L55 16L50.5 17.5L49 22L47.5 17.5L43 16L47.5 14.5Z" fill="#c4b5fd" opacity=".95"/>
+</svg>

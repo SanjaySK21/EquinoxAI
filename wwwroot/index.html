@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#080c16" />
+  <title>Equinox — AI Equity Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="/equinox-ai-icon.svg">
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .logout-button {
+    padding: 8px 11px;
+    min-height: 32px;
+    font-size: 10px;
+    gap: 7px;
+}
+
+.logout-button:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+@media (max-width: 420px) {
+    .logout-button {
+        padding: 7px 8px;
+        font-size: 9px;
+    }
+}
+    /* Overview: selectable stocks, add-stock form, chart hint */
+    .universe-row { cursor: pointer; }
+    .universe-row:hover td { background: rgba(107,149,255,.06); }
+    .universe-row.selected td { background: rgba(107,149,255,.12); }
+    .universe-row.selected td:first-child { box-shadow: inset 3px 0 0 var(--blue); }
+    .ticker-item { cursor: pointer; }
+    .ticker-item.selected { outline: 1px solid var(--blue); border-radius: 10px; }
+    .row-actions { display: flex; gap: 6px; justify-content: flex-end; }
+    .add-stock-form { display: flex; gap: 8px; align-items: center; margin-right: 10px; }
+    .add-stock-form input { width: 150px; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--line2); background: var(--bg2); color: var(--text); text-transform: uppercase; outline: none; }
+    .add-stock-form input:focus { border-color: var(--blue); }
+    .add-stock-form input::placeholder { text-transform: none; color: var(--muted2); }
+    .chart-hint { margin: 2px 0 10px; font-size: 11.5px; color: var(--muted); }
+    .chart-hint i { margin-right: 4px; color: var(--blue); }
+    .chart-legend .positive, .chart-legend .negative { margin-left: 12px; font-family: var(--mono); }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#" data-page="overview">
+        <span class="brand-mark"><i class="bi bi-graph-up-arrow"></i></span>
+        <span class="brand-copy"><b>equinox</b><small>INTELLIGENCE TERMINAL</small></span>
+      </a>
+      <div class="workspace-switch">
+        <span class="workspace-icon">P</span>
+        <span><b>Personal workspace</b><small>Equity research</small></span>
+        <i class="bi bi-chevron-expand"></i>
+      </div>
+      <div class="nav-label">WORKSPACE</div>
+      <nav class="main-nav">
+        <button class="nav-item active" data-page="overview"><i class="bi bi-grid-1x2"></i><span>Overview</span><kbd>01</kbd></button>
+        <button class="nav-item" data-page="markets"><i class="bi bi-activity"></i><span>Market pulse</span><kbd>02</kbd></button>
+        <button class="nav-item" data-page="research"><i class="bi bi-search"></i><span>AI research</span><kbd>03</kbd></button>
+        <button class="nav-item" data-page="watchlist"><i class="bi bi-bookmark-star"></i><span>Watchlist</span><kbd>04</kbd></button>
+        <button class="nav-item" data-page="portfolio"><i class="bi bi-pie-chart"></i><span>Portfolio lab</span><kbd>05</kbd></button>
+      </nav>
+      <div class="nav-label nav-label-spaced">TOOLS</div>
+      <nav class="main-nav">
+        <button class="nav-item" data-page="reports"><i class="bi bi-file-earmark-bar-graph"></i><span>Reports</span><span class="nav-dot"></span></button>
+        <button class="nav-item" data-page="settings"><i class="bi bi-sliders2"></i><span>Preferences</span></button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="plan-card">
+          <div class="plan-orbit"><i class="bi bi-stars"></i></div>
+          <span class="eyebrow">RESEARCH SUITE</span>
+          <h3>Clarity over noise.</h3>
+          <p>Turn market signals into a structured point of view.</p>
+          <button class="plan-link" data-page="research">Explore AI research <i class="bi bi-arrow-up-right"></i></button>
+        </div>
+        <div class="profile-row">
+  <div class="avatar" id="sidebarUserAvatar">EU</div>
+
+  <div class="profile-text">
+    <b id="sidebarUserName">Loading account...</b>
+    <small id="sidebarUserEmail">Checking login session...</small>
+  </div>
+
+  <button class="icon-button subtle"
+          title="Preferences"
+          data-page="settings">
+    <i class="bi bi-three-dots"></i>
+  </button>
+</div>
+      </div>
+    </aside>
+
+    <main class="main-area">
+      <header class="topbar">
+        <button class="icon-button mobile-menu" id="mobileMenu" aria-label="Open menu"><i class="bi bi-list"></i></button>
+        <div class="breadcrumb"><span>Workspace</span><i class="bi bi-chevron-right"></i><b id="breadcrumbCurrent">Overview</b></div>
+        <div class="topbar-right">
+  <div class="system-status">
+    <span class="pulse"></span>
+    <span>Systems operational</span>
+  </div>
+
+  <button class="icon-button"
+          id="globalSearchBtn"
+          title="Search">
+    <i class="bi bi-search"></i>
+  </button>
+
+  <button class="icon-button notification-btn"
+          id="notificationBtn"
+          title="Notifications">
+    <i class="bi bi-bell"></i>
+    <span></span>
+  </button>
+
+  <div class="top-divider"></div>
+
+  <div class="top-avatar"
+       id="topUserAvatar"
+       title="Signed-in user">
+    EU
+  </div>
+
+  <button class="btn btn-secondary logout-button"
+          id="logoutButton"
+          type="button"
+          title="Logout from EquinoxAI">
+    <i class="bi bi-box-arrow-right"></i>
+    <span>Logout</span>
+  </button>
+</div>
+      </header>
+
+      <div class="command-bar" id="commandBar">
+        <i class="bi bi-search"></i><input id="globalSearch" placeholder="Search ticker, company, or workspace page…" autocomplete="off">
+        <kbd>ESC</kbd><div class="search-results" id="searchResults"></div>
+      </div>
+
+      <div class="page-content">
+        <!-- OVERVIEW -->
+        <section class="page active" id="page-overview">
+          <div class="page-heading">
+            <div><div class="eyebrow"><span class="eyebrow-line"></span> <span id="overviewDate">Loading date…</span> <span class="live-tag"><span class="pulse"></span> PROVIDER DATA</span></div>
+              <h1>See the market <span class="gradient-text">differently.</span></h1>
+              <p class="page-subtitle">Your research cockpit for signals, risk context, and AI-assisted equity analysis.</p>
+            </div>
+            <div class="heading-actions"><button class="btn btn-secondary" id="exportOverview"><i class="bi bi-file-earmark-pdf"></i> Export snapshot (PDF)</button><button class="btn btn-primary" data-page="research"><i class="bi bi-stars"></i> New analysis <i class="bi bi-arrow-up-right"></i></button></div>
+          </div>
+
+          <div class="market-strip"><div class="market-strip-label"><span class="live-dot"></span> TRACKED STOCKS <span class="muted">· Latest provider daily closes</span></div><div class="ticker-tape" id="overviewTickerTape">Waiting for provider data…</div></div>
+
+          <div class="section-heading"><div><h2>Market at a glance</h2><p>Signals designed to surface what matters.</p></div><span class="micro-label"><i class="bi bi-clock-history"></i> Waiting for provider response</span></div>
+          <div class="metric-grid"><article class="metric-card"><div class="metric-top"><span>Live market data</span></div><div class="metric-value">Loading…</div><div class="metric-foot"><span class="mini-pill neutral">Waiting for provider</span></div></article></div>
+
+          <div class="content-grid main-grid">
+            <article class="panel chart-panel">
+              <div class="panel-header"><div><div class="eyebrow" id="chartEyebrow">HISTORICAL CLOSING PRICE</div><h3 id="chartTitle">NVIDIA (NVDA)</h3><p id="chartSub">Latest available daily closing prices from the configured market-data provider.</p></div>
+                <div class="segmented" id="chartRange"><button data-range="1W">1W</button><button class="selected" data-range="1M">1M</button><button data-range="3M">3M</button><button data-range="1Y">1Y</button></div>
+              </div>
+              <div class="chart-hint"><i class="bi bi-hand-index"></i> Click any stock in the Research universe table (or the ticker strip above) to chart it.</div>
+              <div class="chart-legend" id="chartLegend">Loading verified chart data…</div>
+              <div class="chart-wrap"><div class="chart-y-labels" id="chartYLabels"></div>
+                <svg class="performance-chart" viewBox="0 0 760 250" preserveAspectRatio="none" aria-label="Historical daily closing-price chart">
+                  <defs><linearGradient id="areaBlue" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#5c8dff" stop-opacity=".22"/><stop offset="100%" stop-color="#5c8dff" stop-opacity="0"/></linearGradient></defs>
+                  <g class="grid-lines"><line x1="0" y1="20" x2="760" y2="20"/><line x1="0" y1="70" x2="760" y2="70"/><line x1="0" y1="120" x2="760" y2="120"/><line x1="0" y1="170" x2="760" y2="170"/><line x1="0" y1="220" x2="760" y2="220"/></g>
+                  <path class="area-path" d="" fill="url(#areaBlue)"/>
+                  <path class="line-blue" d=""/>
+                </svg>
+              </div>
+              <div class="chart-x-labels" id="chartXLabels"></div>
+            </article>
+
+            <article class="panel insight-panel"><div class="panel-header"><div><div class="eyebrow">MODEL INTELLIGENCE</div><h3>Signal brief</h3></div><span class="ai-orb"><i class="bi bi-stars"></i></span></div><div class="insight-feature"><div class="insight-icon"><i class="bi bi-database"></i></div><div><b>Model interpretation appears after a successful analysis</b><p>No market narrative is generated from placeholder data.</p></div></div><div class="insight-divider"></div><div class="confidence-row"><div><span class="muted">Coverage quality</span><b>Not yet measured</b></div><div class="coverage-ring"><span>—</span></div></div><button class="text-action" data-page="research">Open AI research workspace <i class="bi bi-arrow-right"></i></button></article>
+          </div>
+
+          <div class="section-heading section-gap"><div><h2>Research universe</h2><p>Click a stock to chart it, or add your own tickers. Analyze any stock to inspect the evidence behind its score.</p></div><button class="text-action" data-page="watchlist">View watchlist <i class="bi bi-arrow-right"></i></button></div>
+          <div class="table-panel">
+            <div class="table-toolbar"><div class="table-search"><i class="bi bi-search"></i><input id="universeFilter" placeholder="Filter symbols or companies"></div>
+              <div class="table-actions">
+                <form class="add-stock-form" id="addStockForm" autocomplete="off"><input id="addStockInput" placeholder="Add ticker e.g. AMD" maxlength="10" required><button class="btn btn-secondary btn-small" type="submit" id="addStockBtn"><i class="bi bi-plus-lg"></i> Add stock</button></form>
+                <span class="table-count" id="universeCount">5 assets</span><button class="icon-button small" id="refreshUniverse" title="Refresh provider data"><i class="bi bi-arrow-clockwise"></i></button></div></div>
+            <div class="responsive-table"><table><thead><tr><th>ASSET</th><th>LATEST CLOSE</th><th>20-DAY RETURN</th><th>MODEL SCORE</th><th>MODEL VIEW</th><th>RISK</th><th></th></tr></thead>
+              <tbody id="universeRows"><tr><td colspan="7">Loading verified provider data…</td></tr></tbody></table></div>
+            <div class="table-footer"><span><i class="bi bi-info-circle"></i> Latest closes and returns come from the configured provider. Model scores appear only after analysis. Added stocks can be removed with ✕.</span><button class="text-action" data-page="research">Run a live analysis <i class="bi bi-arrow-right"></i></button></div>
+          </div>
+          <div class="disclaimer"><i class="bi bi-shield-lock"></i><span><b>Decision support, not financial advice.</b> Equinox is an educational research interface. Verify source data, assumptions, and risk independently before making investment decisions.</span></div>
+        </section>
+
+        <!-- MARKETS -->
+        <section class="page" id="page-markets"><div class="page-heading"><h1>Market <span class="gradient-text">pulse.</span></h1><p class="page-subtitle">Loading provider-backed market data…</p></div><div class="table-panel"><div class="responsive-table"><table><tbody><tr><td>Market data has not been requested yet.</td></tr></tbody></table></div></div></section>
+
+        <!-- RESEARCH -->
+        <section class="page" id="page-research">
+          <div class="page-heading"><div><div class="eyebrow"><span class="eyebrow-line"></span> AI-ASSISTED EQUITY RESEARCH</div><h1>Research with <span class="gradient-text">context.</span></h1><p class="page-subtitle">Generate a transparent scorecard and an AI-written explanation from the connected .NET analysis API.</p></div><div class="heading-actions"><span class="api-state" id="apiState"><span class="pulse"></span> API status not checked</span></div></div>
+          <div class="research-layout">
+            <aside class="research-form panel">
+              <div class="form-title"><span class="form-step">01</span><div><h3>Configure analysis</h3><p>Choose an asset and your review settings.</p></div></div>
+              <form id="analysisForm">
+                <label for="symbolInput">STOCK SYMBOL <span class="required">*</span></label>
+                <div class="symbol-input-wrap"><i class="bi bi-search"></i><input id="symbolInput" name="symbol" placeholder="e.g. AAPL" maxlength="12" value="AAPL" required autocomplete="off"><span class="input-suffix">US EQUITY</span></div>
+                <div class="quick-symbols"><span>Quick select</span><button type="button" data-symbol="NVDA">NVDA</button><button type="button" data-symbol="MSFT">MSFT</button><button type="button" data-symbol="AAPL">AAPL</button><button type="button" data-symbol="AMZN">AMZN</button><button type="button" data-symbol="TSLA">TSLA</button></div>
+                <div class="form-divider"></div>
+                <div class="form-field"><div class="label-row"><label for="horizonSelect">RESEARCH HORIZON</label><i class="bi bi-info-circle" title="This horizon is passed to the optional AI explanation as context."></i></div><select id="horizonSelect"><option value="swing">Short-term · 1–4 weeks</option><option value="position" selected>Position · 1–6 months</option><option value="long">Long-term · 6–24 months</option></select></div>
+                <div class="form-field"><div class="label-row"><label>ANALYSIS MODULES</label><span class="muted tiny">Current backend scope applies</span></div>
+                  <label class="check-row"><input type="checkbox" checked disabled><span class="custom-check"><i class="bi bi-check"></i></span><span><b>Technical indicators</b><small>Price trend and momentum</small></span><span class="module-status">CORE</span></label>
+                  <label class="check-row"><input type="checkbox" checked disabled><span class="custom-check"><i class="bi bi-check"></i></span><span><b>Risk assessment</b><small>Volatility-aware context</small></span><span class="module-status">CORE</span></label>
+                  <label class="check-row"><input type="checkbox" id="includeAi" checked><span class="custom-check"><i class="bi bi-check"></i></span><span><b>AI narrative</b><small>Explain drivers and limitations</small></span><span class="module-status ai-module">AI</span></label>
+                </div>
+                <div class="form-divider"></div>
+                <div class="api-config-note"><i class="bi bi-shield-check"></i><div><b>Private by design</b><p>API keys should stay on the server. This UI sends only the ticker and analysis options.</p></div></div>
+                <button class="btn btn-primary full-btn" type="submit" id="runAnalysis"><i class="bi bi-stars"></i> Run AI analysis <i class="bi bi-arrow-right"></i></button>
+                <p class="form-footnote"><i class="bi bi-clock"></i> Usually takes a few seconds, depending on provider response.</p>
+              </form>
+            </aside>
+            <div class="research-results">
+              <article class="panel result-empty" id="resultEmpty">
+                <div class="empty-visual"><div class="empty-ring ring-one"></div><div class="empty-ring ring-two"></div><div class="empty-core"><i class="bi bi-graph-up-arrow"></i></div><span class="orbit-dot dot-one"></span><span class="orbit-dot dot-two"></span><span class="orbit-dot dot-three"></span></div>
+                <span class="eyebrow">YOUR NEXT RESEARCH BRIEF</span><h2>Make the signal<br><span class="gradient-text">explain itself.</span></h2><p>Enter a ticker and run the analysis to see the API response, weighted score, factor breakdown, and AI-generated context in one place.</p>
+                <div class="empty-features"><span><i class="bi bi-check2-circle"></i> Explainable scorecard</span><span><i class="bi bi-check2-circle"></i> Risk-aware context</span><span><i class="bi bi-check2-circle"></i> Clear data limitations</span></div>
+              </article>
+              <div id="analysisLoading" class="panel loading-panel hidden"><div class="loader-orbit"><span></span><span></span><span></span></div><h3>Building your research brief</h3><p>Requesting market data, calculating available factors, and preparing the explanation.</p><div class="loading-steps"><span class="done"><i class="bi bi-check-circle-fill"></i> Request received</span><span class="loading-current"><i class="bi bi-arrow-repeat"></i> Processing analysis</span><span><i class="bi bi-circle"></i> Formatting insights</span></div></div>
+              <div id="analysisOutput" class="hidden">
+                <article class="panel analysis-hero">
+                  <div class="result-topline"><span class="eyebrow">ANALYSIS RESULT</span><span class="data-live-label" id="resultDataLabel"><i class="bi bi-cloud-check"></i> API response</span></div>
+                  <div class="analysis-company-row"><div class="company-logo big-logo" id="resultLogo">A</div><div class="company-title"><h2 id="resultSymbol">AAPL</h2><p id="resultSubtitle">Equity analysis · Connected API</p><span id="resultTimestamp" class="muted tiny">Generated moments ago</span></div><button class="icon-button save-analysis" id="saveAnalysis" title="Save analysis"><i class="bi bi-bookmark"></i></button></div>
+                  <div class="analysis-score-layout"><div class="score-gauge" id="scoreGauge"><div class="gauge-inner"><span class="gauge-label">MODEL SCORE</span><b id="resultScore">—</b><small>/ 100</small></div></div><div class="analysis-verdict"><span class="eyebrow">WEIGHTED SCORECARD VIEW</span><div id="resultAction" class="verdict-badge hold">HOLD</div><h3 id="resultHeadline">Analysis generated</h3><p id="resultSummary">Review the factor scores and AI narrative before drawing conclusions.</p><div class="verdict-meta"><span><i class="bi bi-shield-check"></i> Risk context included</span><span><i class="bi bi-info-circle"></i> Not investment advice</span></div></div></div>
+                </article>
+                <div class="result-metric-grid">
+                  <div class="mini-result-card"><span>Latest daily close</span><b id="resultPrice">—</b><small>From market-data response</small></div>
+                  <div class="mini-result-card"><span>20-day return</span><b id="resultReturn">—</b><small>Calculated / returned metric</small></div>
+                  <div class="mini-result-card"><span>20-day volatility</span><b id="resultVolatility">—</b><small>Annualized, if supplied</small></div>
+                </div>
+                <article class="panel factor-panel"><div class="panel-header"><div><div class="eyebrow">MODEL TRANSPARENCY</div><h3>Factor contribution</h3><p>Target scorecard weights from the project brief.</p></div><span class="micro-label">Score scale −100 to +100</span></div>
+                  <div class="factor-weights">
+                    <div class="factor-row"><div class="factor-name"><span class="factor-icon factor-blue"><i class="bi bi-graph-up"></i></span><div><b>Trend</b><small>Directional structure</small></div></div><div class="factor-bar-wrap"><div class="factor-bar"><span id="barTrend"></span></div></div><div class="factor-number" id="factorTrend">—</div><div class="factor-weight">30%</div></div>
+                    <div class="factor-row"><div class="factor-name"><span class="factor-icon factor-violet"><i class="bi bi-speedometer2"></i></span><div><b>Momentum</b><small>Price acceleration</small></div></div><div class="factor-bar-wrap"><div class="factor-bar"><span id="barMomentum"></span></div></div><div class="factor-number" id="factorMomentum">—</div><div class="factor-weight">20%</div></div>
+                    <div class="factor-row"><div class="factor-name"><span class="factor-icon factor-green"><i class="bi bi-gem"></i></span><div><b>Valuation & quality</b><small>Fundamental context</small></div></div><div class="factor-bar-wrap"><div class="factor-bar"><span id="barValuation"></span></div></div><div class="factor-number" id="factorValuation">—</div><div class="factor-weight">20%</div></div>
+                    <div class="factor-row"><div class="factor-name"><span class="factor-icon factor-amber"><i class="bi bi-shield-exclamation"></i></span><div><b>Risk</b><small>Volatility & downside</small></div></div><div class="factor-bar-wrap"><div class="factor-bar"><span id="barRisk"></span></div></div><div class="factor-number" id="factorRisk">—</div><div class="factor-weight">15%</div></div>
+                    <div class="factor-row"><div class="factor-name"><span class="factor-icon factor-pink"><i class="bi bi-chat-square-text"></i></span><div><b>Sentiment</b><small>News / market mood</small></div></div><div class="factor-bar-wrap"><div class="factor-bar"><span id="barSentiment"></span></div></div><div class="factor-number" id="factorSentiment">—</div><div class="factor-weight">15%</div></div>
+                  </div>
+                  <div id="missingFactors" class="missing-factors hidden"><i class="bi bi-exclamation-triangle"></i><span></span></div>
+                </article>
+                <article class="panel ai-explanation-panel"><div class="panel-header"><div class="ai-title-wrap"><span class="ai-orb"><i class="bi bi-stars"></i></span><div><div class="eyebrow">GENERATIVE AI</div><h3>Analyst narrative</h3></div></div><span class="ai-provider-tag">AI-assisted · Verify facts</span></div><div id="aiNarrative" class="ai-narrative">No explanation returned.</div><div id="aiError" class="ai-error hidden"></div><div class="ai-footer"><i class="bi bi-info-circle"></i> AI text may be incomplete or incorrect. Confirm the underlying data and formulas.</div></article>
+                <div class="result-actions"><button class="btn btn-secondary" id="copyResult"><i class="bi bi-clipboard"></i> Copy summary</button><button class="btn btn-secondary" id="downloadResult"><i class="bi bi-file-earmark-pdf"></i> Download PDF</button><button class="btn btn-primary" id="runAgain"><i class="bi bi-arrow-repeat"></i> Run again</button></div>
+                <div class="disclaimer"><i class="bi bi-shield-lock"></i><span><b>Educational decision-support only.</b> Buy/Hold/Sell is a model output, not a guarantee or personalized recommendation. Do not act without independent verification.</span></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- WATCHLIST -->
+        <section class="page" id="page-watchlist">
+          <div class="page-heading"><div><div class="eyebrow"><span class="eyebrow-line"></span> TRACK WHAT MATTERS</div><h1>Your <span class="gradient-text">watchlist.</span></h1><p class="page-subtitle">A focused queue for companies you want to investigate, not a live trading blotter.</p></div><div class="heading-actions"><button class="btn btn-primary" data-page="research"><i class="bi bi-plus-lg"></i> Analyze ticker</button></div></div>
+          <div class="watchlist-summary"><div><span class="muted">Tracked symbols</span><b id="watchCount">0</b></div><div><span class="muted">Last saved analysis</span><b id="watchLast">No saved analysis</b></div><div><span class="muted">Storage</span><b>SQL Server</b></div></div>
+          <div class="table-panel"><div class="table-toolbar"><div><h3>Saved research universe</h3><p class="muted">Use Analyze to request a current score from your backend.</p></div><div class="table-actions"><button class="btn btn-secondary btn-small" id="clearSaved"><i class="bi bi-trash3"></i> Clear saved history</button></div></div>
+            <div class="responsive-table"><table><thead><tr><th>SYMBOL</th><th>LATEST CLOSE</th><th>SCORE</th><th>SIGNAL (BUY / HOLD / SELL)</th><th>LAST ANALYZED</th><th>ACTION</th></tr></thead><tbody id="watchlistRows"></tbody></table></div>
+          </div>
+          <div class="empty-watch-note"><i class="bi bi-bookmark-star"></i><div><b>Keep the evidence close.</b><p>Watchlist entries are stored in SQL Server. Save a successfully analyzed ticker to add it.</p></div></div>
+        </section>
+
+        <!-- PORTFOLIO -->
+        <section class="page" id="page-portfolio"><div class="page-heading"><h1>Portfolio <span class="gradient-text">lab.</span></h1><p class="page-subtitle">Holdings and latest provider prices load when you open this page.</p></div></section>
+
+        <!-- REPORTS -->
+        <section class="page" id="page-reports">
+          <div class="page-heading"><div><div class="eyebrow"><span class="eyebrow-line"></span> AUDITABLE OUTPUTS</div><h1>Research <span class="gradient-text">reports.</span></h1><p class="page-subtitle">Review saved analysis snapshots and export evidence for documentation.</p></div><div class="heading-actions"><button class="btn btn-secondary" id="exportHistory"><i class="bi bi-file-earmark-pdf"></i> Export history (PDF)</button></div></div>
+          <div class="report-intro panel"><div class="report-icon"><i class="bi bi-file-earmark-check"></i></div><div><h3>Research history, built for traceability</h3><p>Every successful analysis is saved to SQL Server. Download the whole history, or a single saved analysis, as a PDF. This is not a certified compliance/audit system.</p></div></div>
+          <div class="table-panel"><div class="table-toolbar"><div><h3>Saved analyses</h3><p class="muted">SQL Server history · latest 200 records</p></div><span class="table-count" id="historyCount">0 records</span></div><div class="responsive-table"><table><thead><tr><th>SYMBOL</th><th>SCORE</th><th>VIEW</th><th>DATE</th><th>EXPORT PDF</th></tr></thead><tbody id="historyRows"></tbody></table></div></div>
+        </section>
+
+        <!-- SETTINGS -->
+        <section class="page" id="page-settings">
+          <div class="page-heading"><div><div class="eyebrow"><span class="eyebrow-line"></span> WORKSPACE CONFIGURATION</div><h1>Preferences & <span class="gradient-text">connections.</span></h1><p class="page-subtitle">Configure the API endpoint and interface preferences for this local frontend.</p></div></div>
+          <div class="settings-layout">
+            <div class="settings-tabs panel"><button class="settings-tab active" data-setting-tab="connection"><i class="bi bi-plug"></i> API connection</button><button class="settings-tab" data-setting-tab="display"><i class="bi bi-display"></i> Display</button><button class="settings-tab" data-setting-tab="privacy"><i class="bi bi-shield-lock"></i> Privacy & data</button></div>
+            <div class="panel settings-panel">
+              <div class="settings-pane active" id="setting-connection"><div class="settings-section-heading"><span class="settings-section-icon"><i class="bi bi-plug"></i></span><div><h3>Backend connection</h3><p>Point the frontend at your ASP.NET Core API.</p></div></div>
+                <label for="apiBaseInput">API BASE URL</label><input class="settings-input" id="apiBaseInput" value="https://localhost:7184/api/stock" spellcheck="false"><p class="settings-help">Expected analyze endpoint: <code>/analyze</code>. Do not paste API provider keys here.</p>
+                <div class="settings-button-row"><button class="btn btn-primary" id="saveApiBase"><i class="bi bi-check2"></i> Save endpoint</button><button class="btn btn-secondary" id="testConnection"><i class="bi bi-activity"></i> Test connection</button></div><div class="connection-feedback" id="connectionFeedback"></div>
+                <div class="settings-divider"></div><div class="settings-section-heading"><span class="settings-section-icon violet-bg"><i class="bi bi-braces"></i></span><div><h3>API contract</h3><p>Frontend is defensive, but your backend should return consistent field names.</p></div></div>
+                <div class="code-contract"><code>POST /api/stock/analyze</code><code>{ "symbol": "AAPL", "includeAiExplanation": true }</code><code>Response: scorecard, technicalMetrics, aiExplanation</code></div>
+              </div>
+              <div class="settings-pane" id="setting-display"><div class="settings-section-heading"><span class="settings-section-icon"><i class="bi bi-display"></i></span><div><h3>Display preferences</h3><p>Set how this interface behaves.</p></div></div><label class="setting-switch-row"><span><b>Reduce motion</b><small>Use fewer animated transitions.</small></span><input type="checkbox" id="reduceMotion"><span class="switch"></span></label><label class="setting-switch-row"><span><b>Compact data tables</b><small>Use tighter spacing for dense views.</small></span><input type="checkbox" id="compactTables"><span class="switch"></span></label><button class="btn btn-primary" id="saveDisplay">Save display preferences</button></div>
+              <div class="settings-pane" id="setting-privacy"><div class="settings-section-heading"><span class="settings-section-icon green-bg"><i class="bi bi-shield-lock"></i></span><div><h3>Privacy & data boundaries</h3><p>Understand what is local and what leaves your browser.</p></div></div><div class="privacy-item"><i class="bi bi-check-circle"></i><div><b>Provider keys</b><p>Should be held by the .NET backend in user-secrets or environment variables, never embedded in browser JavaScript.</p></div></div><div class="privacy-item"><i class="bi bi-database"></i><div><b>Saved history</b><p>Watchlist, portfolio holdings, research-universe additions, and analysis history are stored in SQL Server; display preferences remain in this browser.</p></div></div><div class="privacy-item"><i class="bi bi-cloud-arrow-up"></i><div><b>Market / AI requests</b><p>Submitting an analysis sends the symbol and AI toggle to the configured backend. That backend may call third-party providers.</p></div></div><button class="btn btn-danger-outline" id="clearAllData"><i class="bi bi-trash3"></i> Clear browser preferences</button></div>
+            </div>
+          </div>
+          <div class="disclaimer"><i class="bi bi-exclamation-triangle"></i><span>This is a frontend prototype. Authentication, role-based access, database audit logs, validated valuation/sentiment data, and production security need backend implementation.</span></div>
+        </section>
+      </div>
+      <footer class="app-footer"><span>© 2026 EQUINOX INTELLIGENCE <span class="footer-separator">/</span> PROVIDER-BACKED RESEARCH INTERFACE</span><span><i class="bi bi-shield-check"></i> Educational research interface <span class="footer-separator">·</span> v2.1.0</span></footer>
+    </main>
+  </div>
+  <div class="toast-stack" id="toastStack" aria-live="polite"></div>
+  <div class="modal-backdrop hidden" id="notificationModal"><div class="modal-card"><div class="modal-header"><h3>Workspace notifications</h3><button class="icon-button close-modal"><i class="bi bi-x-lg"></i></button></div><div class="notification-line"><span class="notification-icon"><i class="bi bi-database"></i></span><div><b>Live data only</b><p>Market values and scores are displayed only when returned by configured providers.</p></div></div><div class="notification-line"><span class="notification-icon violet"><i class="bi bi-stars"></i></span><div><b>AI explanation</b><p>Requires a valid Gemini API key. A missing explanation is shown as unavailable.</p></div></div><div class="notification-line"><span class="notification-icon green"><i class="bi bi-shield-check"></i></span><div><b>Protect provider keys</b><p>Keep API keys in .NET user-secrets or environment variables, never browser JavaScript.</p></div></div></div></div>
+
+  <!-- PDF export libraries (loaded before app.js) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+  <script src="js/session.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
