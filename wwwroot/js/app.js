@@ -5,8 +5,8 @@
   const $ = (s, root = document) => root.querySelector(s);
   const $$ = (s, root = document) => [...root.querySelectorAll(s)];
 
-  const ON_APP_PORT = ["5184", "7184"].includes(window.location.port);
-  const API_DEFAULT = ON_APP_PORT ? `${window.location.origin}/api/stock` : "http://localhost:5184/api/stock";
+const ON_APP_PORT = !(["localhost", "127.0.0.1"].includes(window.location.hostname)
+  && !["5184", "7184"].includes(window.location.port));  const API_DEFAULT = ON_APP_PORT ? `${window.location.origin}/api/stock` : "http://localhost:5184/api/stock";
   const API_KEY = "equinox_api_base";
   const DEFAULT_SYMBOL = "NVDA";
   let apiBase = localStorage.getItem(API_KEY) || API_DEFAULT;

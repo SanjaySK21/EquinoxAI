@@ -8,9 +8,9 @@
     const loginButton = document.getElementById("loginButton");
     const registerButton = document.getElementById("registerButton");
 
-    const API_ORIGIN = ["5184", "7184"].includes(window.location.port)
-        ? window.location.origin
-        : "http://localhost:5184";
+   const IS_LOCAL_DEV_SERVER = ["localhost", "127.0.0.1"].includes(window.location.hostname)
+    && !["5184", "7184"].includes(window.location.port);
+const API_ORIGIN = IS_LOCAL_DEV_SERVER ? "http://localhost:5184" : window.location.origin;
 
     const AUTH_API = `${API_ORIGIN}/api/auth`;
 
